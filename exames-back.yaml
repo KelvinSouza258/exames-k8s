@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: exames-back-deployment
+    labels:
+        app: exames-back
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: exames-back
+    template:
+        metadata:
+            labels:
+                app: exames-back
+        spec:
+            containers:
+                - name: exames-back
+                  image: kelvinsouza258/exames-back:v1.0
+                  ports:
+                      - containerPort: 3000
+                  env:
+                      - name: DB_HOST
+                        valueFrom:
+                            configMapKeyRef:
+                                name: exames-config
+                                key: db-url
+                      - name: DB_NAME
+                        valueFrom:
+                            configMapKeyRef:
+                                name: exames-config
+                                key: db
+                      - name: DB_USER
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: db-root-username
+                      - name: DB_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: db-root-password
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: exames-back-service
+    labels:
+        app: exames-back
+spec:
+    ports:
+        - protocol: TCP
+          port: 3000
+          targetPort: 3000
+    selector:
+        app: exames-back

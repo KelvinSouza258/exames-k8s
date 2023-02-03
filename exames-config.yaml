@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: exames-config
+data:
+    db: exames
+    db-url: mariadb-service
+    api-url: exames-back-service

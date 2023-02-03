@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: mariadb-sts
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: mariadb
+    template:
+        metadata:
+            labels:
+                app: mariadb
+        spec:
+            containers:
+                - name: mariadb
+                  image: mariadb:10.10.2
+                  ports:
+                      - containerPort: 3306
+                  env:
+                      - name: MARIADB_ROOT_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: db-root-password
+                      - name: MARIADB_DATABASE
+                        valueFrom:
+                            configMapKeyRef:
+                                name: exames-config
+                                key: db
+                  volumeMounts:
+                      - name: datadir
+                        mountPath: /var/lib/mysql/
+    volumeClaimTemplates:
+        - metadata:
+              name: datadir
+          spec:
+              accessModes: ['ReadWriteOnce']
+              resources:
+                  requests:
+                      storage: 300M
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: mariadb-service
+    labels:
+        app: mariadb
+spec:
+    ports:
+        - protocol: TCP
+          port: 3306
+          targetPort: 3306
+    selector:
+        app: mariadb
