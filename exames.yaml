@@ -40,7 +40,6 @@ spec:
                             secretKeyRef:
                                 name: mariadb-secret
                                 key: db-root-password
-
 ---
 apiVersion: v1
 kind: Service

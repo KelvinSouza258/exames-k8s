@@ -5,4 +5,3 @@ metadata:
 data:
     db: exames
     db-url: mariadb-service
-    api-url: exames-back-service
