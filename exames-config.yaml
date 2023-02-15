@@ -5,3 +5,4 @@ metadata:
 data:
     db: exames
     db-url: mariadb-service
+    api-url: http://exames-back-service:3000
